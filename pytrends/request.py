@@ -17,6 +17,10 @@ if sys.version_info[0] == 2:  # Python 2
 else:  # Python 3
     from urllib.parse import quote
 
+    import urllib3 # the below are annoying
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    urllib3.disable_warnings(urllib3.exceptions.SubjectAltNameWarning)
+
 
 class TrendReq(object):
     """
@@ -51,7 +55,9 @@ class TrendReq(object):
         self.geo = geo
         self.kw_list = list()
         self.proxies = proxies #add a proxy option
-        self.cert = cert
+        self.cert = cert # False or the location of ca-cert 
+                         # or filename in cwd
+        self.timeout = 10 # timeouts are needed by default
         #proxies format: {"http": "http://192.168.0.1:8888" , "https": "https://192.168.0.1:8888"}
         self.cookies = dict(filter(
             lambda i: i[0] == 'NID',
