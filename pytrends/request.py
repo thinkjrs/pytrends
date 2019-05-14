@@ -39,7 +39,7 @@ class TrendReq(object):
     SUGGESTIONS_URL = 'https://trends.google.com/trends/api/autocomplete/'
     CATEGORIES_URL = 'https://trends.google.com/trends/api/explore/pickers/category'
 
-    def __init__(self, hl='en-US', tz=360, geo='', proxies='', cert=False):
+    def __init__(self, hl='en-US', tz=360, geo='', proxies='', cert=False, timeout=10):
         """
         Initialize default values for params
 
@@ -57,7 +57,7 @@ class TrendReq(object):
         self.proxies = proxies #add a proxy option
         self.cert = cert # False or the location of ca-cert 
                          # or filename in cwd
-        self.timeout = 10 # timeouts are needed by default
+        self.timeout = timeout # timeouts are needed by default
         #proxies format: {"http": "http://192.168.0.1:8888" , "https": "https://192.168.0.1:8888"}
         self.cookies = dict(filter(
             lambda i: i[0] == 'NID',
