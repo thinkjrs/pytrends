@@ -35,7 +35,7 @@ class TrendReq(object):
     SUGGESTIONS_URL = 'https://trends.google.com/trends/api/autocomplete/'
     CATEGORIES_URL = 'https://trends.google.com/trends/api/explore/pickers/category'
 
-    def __init__(self, hl='en-US', tz=360, geo='', proxies=''):
+    def __init__(self, hl='en-US', tz=360, geo='', proxies='', cert=''):
         """
         Initialize default values for params
         """
@@ -49,11 +49,14 @@ class TrendReq(object):
         self.geo = geo
         self.kw_list = list()
         self.proxies = proxies #add a proxy option
+        self.cert = cert
         #proxies format: {"http": "http://192.168.0.1:8888" , "https": "https://192.168.0.1:8888"}
         self.cookies = dict(filter(
             lambda i: i[0] == 'NID',
             requests.get(
-                'https://trends.google.com/?geo={geo}'.format(geo=hl[-2:])
+                url='https://trends.google.com/?geo={geo}'.format(geo=hl[-2:]),
+                proxies=self.proxies,
+                verify=self.cert,
             ).cookies.items()
         ))
 
@@ -76,12 +79,22 @@ class TrendReq(object):
         """
         s = requests.session()
         s.headers.update({'accept-language': self.hl})
-        if self.proxies != '':
+        if self.proxies == '':
             s.proxies.update(self.proxies)
         if method == TrendReq.POST_METHOD:
-            response = s.post(url, cookies=self.cookies, **kwargs)
+            response = s.post(url,
+                cookies=self.cookies,
+                proxies=self.proxies,
+                verify=self.cert, 
+                **kwargs
+            )
         else:
-            response = s.get(url, cookies=self.cookies, **kwargs)
+            response = s.get(url, 
+                cookies=self.cookies, 
+                proxies=self.proxies,
+                verify=self.cert,
+                **kwargs
+            )
 
         # check if the response contains json and throw an exception otherwise
         # Google mostly sends 'application/json' in the Content-Type header,
