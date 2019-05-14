@@ -35,9 +35,11 @@ class TrendReq(object):
     SUGGESTIONS_URL = 'https://trends.google.com/trends/api/autocomplete/'
     CATEGORIES_URL = 'https://trends.google.com/trends/api/explore/pickers/category'
 
-    def __init__(self, hl='en-US', tz=360, geo='', proxies='', cert=''):
+    def __init__(self, hl='en-US', tz=360, geo='', proxies='', cert=False):
         """
         Initialize default values for params
+
+        :param cert:    False or string path to ca-cert and filename
         """
         # google rate limit
         self.google_rl = 'You have reached your quota limit. Please try again later.'
@@ -57,6 +59,7 @@ class TrendReq(object):
                 url='https://trends.google.com/?geo={geo}'.format(geo=hl[-2:]),
                 proxies=self.proxies,
                 verify=self.cert,
+                timeout=self.timeout,
             ).cookies.items()
         ))
 
@@ -80,7 +83,8 @@ class TrendReq(object):
         s = requests.session()
         s.headers.update({'accept-language': self.hl})
         if self.proxies == '':
-            s.proxies.update(self.proxies)
+            self.proxies = None
+        
         if method == TrendReq.POST_METHOD:
             response = s.post(url,
                 cookies=self.cookies,
@@ -93,6 +97,7 @@ class TrendReq(object):
                 cookies=self.cookies, 
                 proxies=self.proxies,
                 verify=self.cert,
+                timeout=self.timeout,
                 **kwargs
             )
 
