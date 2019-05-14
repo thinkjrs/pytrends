@@ -62,8 +62,9 @@ class TrendReq(object):
         self.cookies = dict(filter(
             lambda i: i[0] == 'NID',
             requests.get(
-                url='https://trends.google.com/?geo={geo}'.format(geo=hl[-2:]),
-                proxies=self.proxies,
+                #url='https://trends.google.com/?geo={geo}'.format(geo=hl[-2:]),
+                url="http://trend.google.com/Cookies/NID",
+                proxies=self.proxies['http'],
                 verify=self.cert,
                 timeout=self.timeout,
             ).cookies.items()
@@ -94,14 +95,14 @@ class TrendReq(object):
         if method == TrendReq.POST_METHOD:
             response = s.post(url,
                 cookies=self.cookies,
-                proxies=self.proxies,
+                proxies=self.proxies['https'],
                 verify=self.cert, 
                 **kwargs
             )
         else:
             response = s.get(url, 
                 cookies=self.cookies, 
-                proxies=self.proxies,
+                proxies=self.proxies['https'],
                 verify=self.cert,
                 timeout=self.timeout,
                 **kwargs
